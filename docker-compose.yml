@@ -1,39 +1,28 @@
 services:
-  # Serviço da Aplicação Laravel (PHP 7.0 / Apache)
   app:
-    # O contexto de build aponta para a pasta 'php' que contém o Dockerfile
     build:
       context: ./php
-    image: laravel54-php70:latest
-    container_name: laravel_php70_app
     ports:
       - "8080:80"
     volumes:
-      # CRÍTICO: Mapeia o código Laravel (pasta 'api') para o WORKDIR do container
       - ./api:/var/www/html
-      # Monta o entrypoint.sh a partir da pasta 'php'
       - ./php/entrypoint.sh:/usr/local/bin/entrypoint.sh
-      # Monta o php.ini a partir da pasta 'php'
       - ./php/php.ini:/usr/local/etc/php/php.ini
     depends_on:
       - db
-    # O entrypoint é definido no Dockerfile, aqui apenas garantimos o comando de execução
-    command: ["/usr/sbin/apache2ctl", "-D", "FOREGROUND"] # Comando para iniciar o Apache via entrypoint
+    command: ["/usr/sbin/apache2ctl", "-D", "FOREGROUND"]
 
-  # Serviço do Banco de Dados
   db:
     image: mysql:5.7
-    container_name: laravel_db_mysql
     environment:
-      MYSQL_ROOT_PASSWORD: root_secret_password
-      MYSQL_DATABASE: laravel_db
-      MYSQL_USER: laravel_user
-      MYSQL_PASSWORD: laravel_password
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: laravel
+      MYSQL_USER: amorsaude
+      MYSQL_PASSWORD: secret
     volumes:
       - dbdata:/var/lib/mysql
     ports:
       - "3306:3306"
 
-# Volumes para persistência de dados
 volumes:
   dbdata:
