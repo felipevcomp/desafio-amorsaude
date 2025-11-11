@@ -19,6 +19,11 @@ class UserRepository implements UserRepositoryInterface
         return $this->user->where('email', $email)->first();
     }
 
+    public function findById(int $id)
+    {
+        return $this->user->find($id);
+    }
+
     public function create(array $data): User
     {
         $data['password'] = bcrypt($data['password']);
@@ -26,6 +31,19 @@ class UserRepository implements UserRepositoryInterface
         $user = $this->user->create($data);
 
         return $user->fresh();
+    }
+
+    public function deleteTokens(int $userId): bool
+    {
+        $user = $this->findById($userId);
+
+        if (! $user) {
+            return false;
+        }
+
+        $user->tokens()->delete();
+
+        return true;
     }
 
     public function createToken(User $user, string $name = 'app.authToken'): string
