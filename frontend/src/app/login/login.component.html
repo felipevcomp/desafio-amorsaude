@@ -1,0 +1,48 @@
+<div class="col-md-12">
+  <div class="card card-container">
+    <form
+      name="form"
+      (ngSubmit)="f.form.valid && onSubmit()"
+      #f="ngForm"
+      novalidate
+    >
+      <div class="form-group">
+        <label for="email">E-mail</label>
+        <input
+          type="email"
+          class="form-control"
+          name="email"
+          [(ngModel)]="form.email"
+          required
+          #email="ngModel"
+          [ngClass]="{ 'is-invalid': f.submitted && email.errors }"
+        />
+        @if (email.errors && f.submitted) {
+        <div class="invalid-feedback">Por favor, digite seu usuário (e-mail de cadastro)!</div>
+        }
+      </div>
+      <div class="form-group">
+        <label for="password">Senha</label>
+        <input
+          type="password"
+          class="form-control"
+          name="password"
+          [(ngModel)]="form.password"
+          required
+          #password="ngModel"
+          [ngClass]="{ 'is-invalid': f.submitted && password.errors }"
+        />
+        @if (password.errors && f.submitted) {
+        <div class="invalid-feedback">
+          @if (password.errors['required']) {
+          <div>Digite uma senha</div>
+          }
+        </div>
+        }
+      </div>
+      <div class="form-group mt-3">
+        <button class="btn btn-primary btn-block">Entrar</button>
+      </div>
+    </form>
+  </div>
+</div>
