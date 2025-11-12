@@ -12,14 +12,14 @@ class ClinicController extends Controller
      */
     protected $clinicService;
 
-    public function index()
-    {
-        return $this->clinicService->getAllClinics();
-    }
-
     public function __construct(ClinicService $clinicService)
     {
         $this->clinicService = $clinicService;
+    }
+
+    public function index()
+    {
+        return $this->clinicService->getAllClinics();
     }
 
     public function store(StoreClinicRequest $request)
