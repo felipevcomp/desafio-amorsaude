@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 
 class Clinic extends Model
@@ -11,7 +12,7 @@ class Clinic extends Model
         'company_name',
         'trade_name',
         'cnpj',
-        'regional',
+        'regional_id',
         'opening_date',
         'active',
         'specialty_id',
@@ -25,6 +26,13 @@ class Clinic extends Model
     protected $casts = [
         'opening_date' => 'date',
     ];
+
+
+    public function regional(): BelongsTo
+    {
+        return $this->belongsTo(Regional::class);
+    }
+
 
     public function specialties(): BelongsToMany
     {

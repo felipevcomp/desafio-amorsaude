@@ -18,10 +18,15 @@ class CreateClinicsTable extends Migration
             $table->string('company_name', 255);
             $table->string('trade_name', 255);
             $table->char('cnpj', 14)->unique();
-            $table->uuid('regional');
+            $table->unsignedInteger('regional_id');
             $table->date('opening_date');
             $table->boolean('active')->default(true);
             $table->timestamps();
+
+            $table->foreign('regional_id')
+                ->references('id')
+                ->on('regionals')
+                ->onDelete('cascade');
         });
     }
 
