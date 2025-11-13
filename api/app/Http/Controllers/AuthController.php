@@ -16,7 +16,7 @@ class AuthController extends Controller
     protected $authService;
 
     /**
-     * AuthController constructor
+     * AuthController constructor.
      * @param AuthService $authService
      */
     public function __construct(AuthService $authService)
@@ -56,11 +56,11 @@ class AuthController extends Controller
     }
 
     /**
-     * Returns Authenticated User Details
+     * Returns Authenticated User Details.
      *
      * @return JsonResponse
      */
-    public function details()
+    public function details(): JsonResponse
     {
         return response()->json(['user' => auth()->user()], 200);
     }
