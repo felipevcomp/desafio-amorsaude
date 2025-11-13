@@ -1,0 +1,148 @@
+<div class="container mt-4">
+  <div class="card">
+    <div class="card-body">
+      <div class="d-flex justify-content-between align-items-center mb-3">
+        <h2>{{ clinicId ? 'Editar Clínica' : 'Nova Clínica' }}</h2>
+        <button
+          *ngIf="clinicId"
+          type="button"
+          class="btn btn-danger"
+          (click)="deleteClinic()"
+        >
+          Excluir Clínica
+        </button>
+      </div>
+
+      <div *ngIf="loading" class="alert alert-info">Carregando dados...</div>
+      <div *ngIf="error" class="alert alert-danger">{{ error }}</div>
+
+      <form
+        [formGroup]="form"
+        (ngSubmit)="submit()"
+        *ngIf="!loading"
+        class="row g-3 needs-validation"
+        [ngClass]="{ 'was-validated': submitted }"
+        novalidate
+      >
+        <!-- Razão Social -->
+        <div class="col-md-6">
+          <label class="form-label">Razão Social</label>
+          <input
+            type="text"
+            class="form-control"
+            formControlName="company_name"
+            required
+          />
+          <div class="invalid-feedback">
+            Razão Social é obrigatória.
+          </div>
+        </div>
+
+        <!-- Nome Fantasia -->
+        <div class="col-md-6">
+          <label class="form-label">Nome Fantasia</label>
+          <input
+            type="text"
+            class="form-control"
+            formControlName="trade_name"
+            required
+          />
+          <div class="invalid-feedback">
+            Nome Fantasia é obrigatório.
+          </div>
+        </div>
+
+        <!-- CNPJ -->
+        <div class="col-md-6">
+          <label class="form-label">CNPJ</label>
+          <input
+            type="text"
+            class="form-control"
+            formControlName="cnpj"
+            mask="00.000.000/0000-00"
+            required
+          />
+          <div class="invalid-feedback">
+            CNPJ é obrigatório.
+          </div>
+        </div>
+
+        <!-- Regional -->
+        <div class="col-md-6">
+          <label class="form-label">Regional</label>
+          <select
+            class="form-select"
+            formControlName="regional_id"
+            required
+          >
+            <option value="">Selecione...</option>
+            <option *ngFor="let r of regionals" [value]="r.id">{{ r.name }}</option>
+          </select>
+          <div class="invalid-feedback">
+            Regional é obrigatória.
+          </div>
+        </div>
+
+        <!-- Data de Inauguração -->
+        <div class="col-md-6">
+          <label class="form-label">Data de Inauguração</label>
+          <input
+            type="date"
+            class="form-control"
+            formControlName="opening_date"
+            required
+          />
+          <div class="invalid-feedback">
+            Data de inauguração é obrigatória.
+          </div>
+        </div>
+
+        <!-- Ativa -->
+        <div class="col-md-6 d-flex align-items-center">
+          <div class="form-check mt-3">
+            <input
+              type="checkbox"
+              class="form-check-input"
+              formControlName="active"
+            />
+            <label class="form-check-label">Ativa</label>
+          </div>
+        </div>
+
+        <!-- Especialidades -->
+        <div class="col-12">
+          <label class="form-label">Especialidades</label>
+          <ng-select
+            [items]="specialties"
+            bindLabel="name"
+            bindValue="id"
+            [multiple]="true"
+            placeholder="Selecione especialidades"
+            formControlName="specialties"
+            required
+          >
+          </ng-select>
+          <div class="text-danger mt-1" *ngIf="submitted && (form.get('specialties')?.value || []).length < 5">
+            Selecione pelo menos 5 especialidades.
+          </div>
+        </div>
+
+        <!-- Botão Salvar -->
+        <div class="col-12 mt-3">
+          <button
+            class="btn btn-primary"
+            [disabled]="saving"
+            type="submit"
+          >
+            {{ saving ? 'Salvando...' : 'Salvar' }}
+          </button>
+        </div>
+      </form>
+
+      <!-- Mensagem de sucesso -->
+      <div *ngIf="success" class="alert alert-success mt-3">
+        {{ success }}
+      </div>
+    </div>
+  </div>
+</div>

@@ -1,5 +1,9 @@
 <div class="col-md-12">
   <div class="card card-container">
+    <h2>Login</h2>
+    <div class="text-danger mt-1" *ngIf="(password.errors || email.errors) && f.submitted">
+      Dados incorretos. Por favor, revise seus dados e tente novamente.
+    </div>
     <form
       name="form"
       (ngSubmit)="f.form.valid && onSubmit()"
@@ -15,12 +19,18 @@
           [(ngModel)]="form.email"
           required
           #email="ngModel"
-          [ngClass]="{ 'is-invalid': f.submitted && email.errors }"
+          [ngClass]="{ 'is-invalid': f.submitted && (email.errors || fieldErrors.email) }"
         />
-        @if (email.errors && f.submitted) {
-        <div class="invalid-feedback">Por favor, digite seu usuário (e-mail de cadastro)!</div>
-        }
+
+        <div class="text-danger mt-1" *ngIf="f.submitted && email.errors?.['required']">
+          Por favor, digite seu e-mail.
+        </div>
+
+        <div class="text-danger mt-1" *ngIf="fieldErrors.email">
+          {{ fieldErrors.email[0] }}
+        </div>
       </div>
+
       <div class="form-group">
         <label for="password">Senha</label>
         <input
@@ -30,18 +40,24 @@
           [(ngModel)]="form.password"
           required
           #password="ngModel"
-          [ngClass]="{ 'is-invalid': f.submitted && password.errors }"
+          [ngClass]="{ 'is-invalid': f.submitted && (password.errors || fieldErrors.password) }"
         />
-        @if (password.errors && f.submitted) {
-        <div class="invalid-feedback">
-          @if (password.errors['required']) {
-          <div>Digite uma senha</div>
-          }
+
+        <div class="text-danger mt-1" *ngIf="f.submitted && password.errors?.['required']">
+          Digite uma senha.
         </div>
-        }
+
+        <div class="text-danger mt-1" *ngIf="fieldErrors.password">
+          {{ fieldErrors.password[0] }}
+        </div>
       </div>
+
       <div class="form-group mt-3">
         <button class="btn btn-primary btn-block">Entrar</button>
+      </div>
+
+      <div class="text-danger mt-1" *ngIf="isLoginFailed && errorMessage">
+        {{ errorMessage }}
       </div>
     </form>
   </div>

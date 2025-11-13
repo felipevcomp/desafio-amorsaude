@@ -25,6 +25,11 @@ export class ClinicService {
     return this.http.put(`${this.apiUrl}/${id}`, data);
   }
 
+  /** Exclui uma clínica */
+  deleteClinic(id: number | string): Observable<any> {
+    return this.http.delete(`${this.apiUrl}/${id}`);
+  }
+
   /** Lista clínicas paginadas */
   getAllClinics(page: number = 1): Observable<any> {
     return this.http.get<any>(`${this.apiUrl}?page=${page}`);

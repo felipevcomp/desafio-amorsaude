@@ -1,28 +1,29 @@
 import {NgModule} from '@angular/core';
 import {BrowserModule} from '@angular/platform-browser';
-import {FormsModule} from '@angular/forms';
 import {HttpClientModule} from '@angular/common/http';
-import {ReactiveFormsModule} from '@angular/forms';
+import {ReactiveFormsModule, FormsModule} from '@angular/forms';
 
 import {AppRoutingModule} from './app-routing.module';
 import {AppComponent} from './app.component';
 import {LoginComponent} from './login/login.component';
-import {ProfileComponent} from './profile/profile.component';
 import {ClinicFormComponent} from "./clinic/clinic-form/clinic-form.component";
 import {ClinicListComponent} from "./clinic/clinic-list/clinic-list.component";
+import {NgxMaskDirective, provideNgxMask} from 'ngx-mask';
 
 import {httpInterceptorProviders} from './_helpers/http.interceptor';
-import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
+import {NgbModule} from '@ng-bootstrap/ng-bootstrap';
 import {SpecialtiesModalComponent} from "./modals/specialties-modal.component";
+import {NgSelectModule} from "@ng-select/ng-select";
+import {ClinicViewComponent} from "./clinic/clinic-view/clinic-view.component";
 
 @NgModule({
   declarations: [
     AppComponent,
     LoginComponent,
-    ProfileComponent,
     ClinicFormComponent,
     ClinicListComponent,
-    SpecialtiesModalComponent
+    SpecialtiesModalComponent,
+    ClinicViewComponent
   ],
   imports: [
     BrowserModule,
@@ -30,9 +31,11 @@ import {SpecialtiesModalComponent} from "./modals/specialties-modal.component";
     FormsModule,
     HttpClientModule,
     ReactiveFormsModule,
-    NgbModule
+    NgbModule,
+    NgxMaskDirective,
+    NgSelectModule
   ],
-  providers: [httpInterceptorProviders],
+  providers: [httpInterceptorProviders, provideNgxMask()],
   bootstrap: [AppComponent]
 })
 export class AppModule {

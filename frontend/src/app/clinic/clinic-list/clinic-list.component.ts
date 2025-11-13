@@ -3,6 +3,7 @@ import {ClinicService} from '../../_services/clinic.service';
 import {debounceTime, Subject} from "rxjs";
 import {NgbModal} from '@ng-bootstrap/ng-bootstrap';
 import {SpecialtiesModalComponent} from '../../modals/specialties-modal.component';
+import {Router} from "@angular/router";
 
 interface Clinic {
   id: number;
@@ -38,7 +39,7 @@ export class ClinicListComponent implements OnInit {
   filterTerm: string = '';
   private filterSubject: Subject<string> = new Subject();
 
-  constructor(private clinicService: ClinicService, private modalService: NgbModal) {
+  constructor(private clinicService: ClinicService, private modalService: NgbModal, private router: Router) {
   }
 
   ngOnInit() {
@@ -168,7 +169,24 @@ export class ClinicListComponent implements OnInit {
   }
 
   openSpecialtiesModal(specialties: any[]) {
-    const modalRef = this.modalService.open(SpecialtiesModalComponent, {size: 'lg'});
+    const modalRef = this.modalService.open(SpecialtiesModalComponent, {size: 'lg', centered: true });
     modalRef.componentInstance.specialties = specialties;
+  }
+
+  formatCnpj(cnpj: string): string {
+    if (!cnpj) return '';
+    const v = cnpj.replace(/\D/g, '');
+    return v.replace(/^(\d{2})(\d{3})(\d{3})(\d{4})(\d{2})$/, '$1.$2.$3/$4-$5');
+  }
+  newClinic() {
+    this.router.navigate(['/clinic/create']);
+  }
+
+  editClinic(id: number) {
+    this.router.navigate(['/clinic/edit', id]);
+  }
+
+  viewClinic(id: number) {
+    this.router.navigate(['/clinic/view', id]);
   }
 }

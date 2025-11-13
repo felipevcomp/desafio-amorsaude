@@ -1,8 +1,16 @@
 <div class="container mt-4">
   <div class="card">
     <div class="card-body">
-      <h2>Entidades</h2>
-
+      <div class="d-flex justify-content-between align-items-center mb-3">
+        <h2>Unidades</h2>
+        <button
+          type="button"
+          class="btn btn-success"
+          (click)="newClinic()"
+        >
+          Nova Unidade
+        </button>
+      </div>
       <div class="mb-3">
         <div class="input-group">
           <span class="input-group-text">
@@ -25,13 +33,12 @@
         </div>
       </div>
 
-
       <div *ngIf="loading" class="alert alert-info">Carregando clínicas...</div>
       <div *ngIf="error" class="alert alert-danger">{{ error }}</div>
 
       <div class="card">
         <div class="card-body">
-          <table *ngIf="!loading && clinics.length" class="table table-hover">
+          <table class="table table-hover" [style.min-height.px]="600">
             <thead class="thead-dark">
             <tr>
               <th (click)="sortBy('company_name')" style="cursor:pointer">
@@ -54,25 +61,40 @@
                 Ativa
                 <span *ngIf="sortColumn === 'active'">{{ sortDirection === 'asc' ? '▲' : '▼' }}</span>
               </th>
+              <th>Ações</th>
             </tr>
-
             </thead>
             <tbody>
             <tr *ngFor="let clinic of filteredClinics">
               <td>{{ clinic.company_name }}</td>
-              <td>{{ clinic.cnpj }}</td>
+              <td>{{ formatCnpj(clinic.cnpj) }}</td>
               <td>{{ clinic.regional?.name }}</td>
               <td>
-                  <span>{{ clinic.specialties[0].name }}, {{ clinic.specialties[1].name }}</span>
-                  <button type="button" class="btn btn-link p-0 ms-1"
-                          (click)="openSpecialtiesModal(clinic.specialties)">
-                    <i class="bi bi-plus-circle"></i>
-                  </button>
+            <span *ngIf="clinic.specialties.length > 0">
+              {{ clinic.specialties[0]?.name }}<span *ngIf="clinic.specialties.length > 1">, {{ clinic.specialties[1]?.name }}</span>
+            </span>
+                <button type="button" class="btn btn-link p-0 ms-1" (click)="openSpecialtiesModal(clinic.specialties)">
+                  <i class="bi bi-plus-circle"></i>
+                </button>
               </td>
               <td>
-                <span [class.text-success]="clinic.active" [class.text-danger]="!clinic.active">
-                  {{ clinic.active ? 'Sim' : 'Não' }}
-                </span>
+            <span [class.text-success]="clinic.active" [class.text-danger]="!clinic.active">
+              {{ clinic.active ? 'Sim' : 'Não' }}
+            </span>
+              </td>
+              <td>
+                <button type="button" class="btn btn-sm btn-primary me-1" (click)="editClinic(clinic.id)">
+                  <i class="bi bi-pencil"></i>
+                </button>
+                <button type="button" class="btn btn-sm btn-secondary" (click)="viewClinic(clinic.id)">
+                  <i class="bi bi-eye"></i>
+                </button>
+              </td>
+            </tr>
+
+            <tr *ngIf="!loading && filteredClinics.length === 0">
+              <td colspan="6" class="text-center py-5">
+                não foram encontrados resultados.
               </td>
             </tr>
             </tbody>

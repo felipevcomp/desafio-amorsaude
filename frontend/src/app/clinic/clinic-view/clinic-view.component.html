@@ -1,0 +1,108 @@
+<div class="container mt-4">
+  <div class="card">
+    <div class="card-body">
+      <div class="d-flex justify-content-between align-items-center mb-3">
+        <h2>Visualizar Clínica</h2>
+        <button class="btn btn-primary" (click)="editClinic(clinic.id)">
+          Editar
+        </button>
+      </div>
+
+      <div *ngIf="loading" class="alert alert-info">Carregando dados...</div>
+      <div *ngIf="error" class="alert alert-danger">{{ error }}</div>
+
+      <form *ngIf="clinic && !loading">
+        <div class="row mb-3">
+          <div class="col-md-6">
+            <label class="form-label">Razão Social</label>
+            <input
+              type="text"
+              readonly
+              class="form-control-plaintext"
+              [value]="clinic.company_name"
+            />
+          </div>
+          <div class="col-md-6">
+            <label class="form-label">Nome Fantasia</label>
+            <input
+              type="text"
+              readonly
+              class="form-control-plaintext"
+              [value]="clinic.trade_name"
+            />
+          </div>
+        </div>
+
+        <div class="row mb-3">
+          <div class="col-md-6">
+            <label class="form-label">CNPJ</label>
+            <input
+              type="text"
+              readonly
+              class="form-control-plaintext"
+              [value]="(clinic.cnpj)"
+            />
+          </div>
+          <div class="col-md-6">
+            <label class="form-label">Regional</label>
+            <input
+              type="text"
+              readonly
+              class="form-control-plaintext"
+              [value]="clinic.regional?.name"
+            />
+          </div>
+        </div>
+
+        <div class="row mb-3">
+          <div class="col-md-6">
+            <label class="form-label">Especialidades</label>
+            <div class="d-flex align-items-center">
+              <span >
+                {{ clinic.specialties[0]?.name }}, {{ clinic.specialties[1]?.name }}
+              </span>
+              <button
+                type="button"
+                class="btn btn-link p-0 ms-1"
+                (click)="openSpecialtiesModal(clinic.specialties)"
+                [disabled]="!clinic.specialties?.length"
+                title="Ver todas"
+                style="line-height: 1;"
+              >
+                <i class="bi bi-plus-circle fs-5 align-middle"></i>
+              </button>
+            </div>
+          </div>
+
+          <div class="col-md-6">
+            <label class="form-label">Ativa</label>
+            <input
+              type="text"
+              readonly
+              class="form-control-plaintext"
+              [value]="clinic.active ? 'Sim' : 'Não'"
+            />
+          </div>
+        </div>
+
+        <div class="row mb-3">
+          <div class="col-md-6">
+            <label class="form-label">Data de Abertura</label>
+            <input
+              type="text"
+              readonly
+              class="form-control-plaintext"
+              [value]="clinic.opening_date | date: 'dd/MM/yyyy'"
+            />
+          </div>
+        </div>
+
+        <div class="d-flex justify-content-end mt-4">
+          <button class="btn btn-secondary" (click)="backToList()">
+            <i class="bi bi-arrow-left"></i> Voltar
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
