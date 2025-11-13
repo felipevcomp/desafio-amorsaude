@@ -2,9 +2,9 @@
 
 namespace App\Services;
 
+use App\Models\Regional;
+use App\Models\Specialty;
 use App\Repositories\Interfaces\ClinicRepositoryInterface;
-use Illuminate\Auth\Access\AuthorizationException;
-use Illuminate\Support\Facades\Gate;
 
 class ClinicService
 {
@@ -22,13 +22,13 @@ class ClinicService
 
     public function getClinic(int $id)
     {
-        $task = $this->clinicRepository->findById($id);
+        $clinic = $this->clinicRepository->findById($id);
 
-        if (!$task) {
-            abort(404, 'Tarefa não encontrada');
+        if (!$clinic) {
+            abort(404, 'Clínica não encontrada');
         }
 
-        return $task;
+        return $clinic;
     }
 
     public function createClinic(array $data)
@@ -38,24 +38,16 @@ class ClinicService
 
     public function updateClinic(int $id, array $data)
     {
-        $task = $this->clinicRepository->findById($id);
+        $clinic = $this->clinicRepository->findById($id);
 
-        if (!$task) {
-            abort(404, 'Tarefa não encontrada');
-        }
-
-        if (Gate::denies('update', $task)) {
-            throw new AuthorizationException('Você não está autorizado a atualizar esta tarefa');
-        }
-
-        if (isset($data['user_id']) && Gate::denies('assign', Clinic::class)) {
-            unset($data['user_id']);
+        if (!$clinic) {
+            abort(404, 'Clínica não encontrada');
         }
 
         $updatedClinic = $this->clinicRepository->update($id, $data);
 
         if (!$updatedClinic) {
-            abort(500, 'Falha ao atualizar a tarefa');
+            abort(500, 'Falha ao atualizar a clínica');
         }
 
         return $updatedClinic;
@@ -63,17 +55,23 @@ class ClinicService
 
     public function deleteClinic(int $id): bool
     {
-        $task = $this->clinicRepository->findById($id);
+        $clinic = $this->clinicRepository->findById($id);
 
-        if (!$task) {
-            abort(404, 'Tarefa não encontrada');
-        }
-
-        if (Gate::denies('delete', $task)) {
-            throw new AuthorizationException('Você não está autorizado a excluir esta tarefa');
+        if (!$clinic) {
+            abort(404, 'Clínica não encontrada');
         }
 
         return $this->clinicRepository->delete($id);
+    }
+
+    public function getClinicRegionals()
+    {
+        return Regional::get();
+    }
+
+    public function getClinicSpecialties()
+    {
+        return Specialty::get();
     }
 
 }

@@ -22,19 +22,14 @@ abstract class BaseClinicRequest extends FormRequest
     protected function commonRules(): array
     {
         return [
-            'company_name' => ['required', 'string', 'max:255'],
-            'trade_name' => ['required', 'string', 'max:255'],
-            'cnpj' => [
-                'required',
-                'string',
-                'size:14',
-                'regex:/^[0-9]{14}$/',
-                'unique:clinics,cnpj',
-            ],
-            'regional' => ['required'],
-            'opening_date' => ['required', 'date'],
-            'active' => ['required', 'boolean'],
-            'specialties' => ['required', 'string'],
+            'company_name' => 'required|string|max:255',
+            'trade_name' => 'required|string|max:255',
+            'cnpj' => 'required|string|max:20',
+            'regional_id' => 'required|exists:regionals,id',
+            'opening_date' => 'required|date',
+            'active' => 'boolean',
+            'specialties' => 'required|array|min:5',
+            'specialties.*' => 'required|exists:specialties,id',
         ];
     }
 }

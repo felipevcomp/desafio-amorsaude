@@ -13,15 +13,24 @@ use Illuminate\Http\Request;
 |
 */
 
+// Rota de login
 Route::post('login', 'AuthController@login');
+// Rota de registro
 Route::post('register', 'AuthController@register');
 
 Route::group(['middleware' => 'auth:api'], function () {
     Route::get('/user', function (Request $request) {
         return $request->user();
     });
-    Route::post('clinic', 'ClinicController@store');
-    Route::get('clinic', 'ClinicController@index');
 
+    // Rotas de clínicas
+    Route::apiResource('clinic', 'ClinicController');
+
+    // Rota de especialidades
+    Route::get('clinic/specialties', 'ClinicController@specialties');
+    // Rota de regionais
+    Route::get('clinic/regionals', 'ClinicController@regionals');
+
+    // Rota de logout
     Route::post('logout', 'AuthController@logout');
 });
