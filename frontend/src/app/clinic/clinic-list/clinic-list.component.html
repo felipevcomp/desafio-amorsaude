@@ -1,66 +1,108 @@
 <div class="container mt-4">
-  <h2>Lista de Clínicas</h2>
+  <div class="card">
+    <div class="card-body">
+      <h2>Entidades</h2>
 
-  <div *ngIf="loading" class="alert alert-info">Carregando clínicas...</div>
-  <div *ngIf="error" class="alert alert-danger">{{ error }}</div>
-
-  <table *ngIf="!loading && clinics.length" class="table table-hover">
-    <thead class="thead-dark">
-    <tr>
-      <th (click)="sortBy('company_name')" style="cursor:pointer">
-        Razão Social
-        <span *ngIf="sortColumn === 'company_name'">
-      {{ sortDirection === 'asc' ? '▲' : '▼' }}
-    </span>
-      </th>
-      <th>CNPJ</th>
-      <th>Regional</th>
-      <th>Especialidades</th>
-      <th>Ativa</th>
-    </tr>
-    </thead>
-    <tbody>
-    <tr *ngFor="let clinic of clinics">
-      <td>{{ clinic.company_name }}</td>
-      <td>{{ clinic.cnpj }}</td>
-      <td>{{ clinic.regional?.name }}</td>
-      <td>
-          <span *ngFor="let s of clinic.specialties; let last = last">
-            {{ s.name }}<span *ngIf="!last">, </span>
+      <div class="mb-3">
+        <div class="input-group">
+          <span class="input-group-text">
+            <i class="bi bi-search"></i>
           </span>
-      </td>
-      <td>
-          <span [class.text-success]="clinic.active" [class.text-danger]="!clinic.active">
-            {{ clinic.active ? 'Sim' : 'Não' }}
-          </span>
-      </td>
-    </tr>
-    </tbody>
-  </table>
+          <input
+            type="text"
+            class="form-control"
+            [(ngModel)]="filterTerm"
+            (ngModelChange)="onFilterChange($event)"
+          />
+          <button
+            *ngIf="filterTerm"
+            class="btn btn-outline-secondary"
+            type="button"
+            (click)="filterTerm=''; onFilterChange('')"
+          >
+            <i class="bi bi-x-lg"></i>
+          </button>
+        </div>
+      </div>
 
-  <div *ngIf="!loading && !clinics.length" class="alert alert-warning">
-    Nenhuma clínica cadastrada.
+
+      <div *ngIf="loading" class="alert alert-info">Carregando clínicas...</div>
+      <div *ngIf="error" class="alert alert-danger">{{ error }}</div>
+
+      <div class="card">
+        <div class="card-body">
+          <table *ngIf="!loading && clinics.length" class="table table-hover">
+            <thead class="thead-dark">
+            <tr>
+              <th (click)="sortBy('company_name')" style="cursor:pointer">
+                Razão Social
+                <span *ngIf="sortColumn === 'company_name'">{{ sortDirection === 'asc' ? '▲' : '▼' }}</span>
+              </th>
+              <th (click)="sortBy('cnpj')" style="cursor:pointer">
+                CNPJ
+                <span *ngIf="sortColumn === 'cnpj'">{{ sortDirection === 'asc' ? '▲' : '▼' }}</span>
+              </th>
+              <th (click)="sortBy('regional')" style="cursor:pointer">
+                Regional
+                <span *ngIf="sortColumn === 'regional'">{{ sortDirection === 'asc' ? '▲' : '▼' }}</span>
+              </th>
+              <th (click)="sortBy('specialties')" style="cursor:pointer">
+                Especialidades
+                <span *ngIf="sortColumn === 'specialties'">{{ sortDirection === 'asc' ? '▲' : '▼' }}</span>
+              </th>
+              <th (click)="sortBy('active')" style="cursor:pointer">
+                Ativa
+                <span *ngIf="sortColumn === 'active'">{{ sortDirection === 'asc' ? '▲' : '▼' }}</span>
+              </th>
+            </tr>
+
+            </thead>
+            <tbody>
+            <tr *ngFor="let clinic of filteredClinics">
+              <td>{{ clinic.company_name }}</td>
+              <td>{{ clinic.cnpj }}</td>
+              <td>{{ clinic.regional?.name }}</td>
+              <td>
+                  <span>{{ clinic.specialties[0].name }}, {{ clinic.specialties[1].name }}</span>
+                  <button type="button" class="btn btn-link p-0 ms-1"
+                          (click)="openSpecialtiesModal(clinic.specialties)">
+                    <i class="bi bi-plus-circle"></i>
+                  </button>
+              </td>
+              <td>
+                <span [class.text-success]="clinic.active" [class.text-danger]="!clinic.active">
+                  {{ clinic.active ? 'Sim' : 'Não' }}
+                </span>
+              </td>
+            </tr>
+            </tbody>
+          </table>
+
+          <div *ngIf="!loading && !clinics.length" class="alert alert-warning">
+            Nenhuma clínica cadastrada.
+          </div>
+
+          <nav *ngIf="lastPage > 1">
+            <ul class="pagination justify-content-center mt-3">
+              <li class="page-item" [class.disabled]="currentPage === 1">
+                <button class="page-link" (click)="goToPage(currentPage - 1)">Anterior</button>
+              </li>
+
+              <li class="page-item"
+                  *ngFor="let page of visiblePages"
+                  [class.active]="currentPage === page">
+                <button class="page-link" (click)="goToPage(page)">
+                  {{ page }}
+                </button>
+              </li>
+
+              <li class="page-item" [class.disabled]="currentPage === lastPage">
+                <button class="page-link" (click)="goToPage(currentPage + 1)">Próximo</button>
+              </li>
+            </ul>
+          </nav>
+        </div>
+      </div>
+    </div>
   </div>
-
-  <!-- Paginação -->
-  <nav *ngIf="lastPage > 1">
-    <ul class="pagination justify-content-center mt-3">
-      <li class="page-item" [class.disabled]="currentPage === 1">
-        <button class="page-link" (click)="goToPage(currentPage - 1)">Anterior</button>
-      </li>
-
-      <li class="page-item"
-          *ngFor="let page of visiblePages"
-          [class.active]="currentPage === page">
-        <button class="page-link" (click)="goToPage(page)">
-          {{ page }}
-        </button>
-      </li>
-
-      <li class="page-item" [class.disabled]="currentPage === lastPage">
-        <button class="page-link" (click)="goToPage(currentPage + 1)">Próximo</button>
-      </li>
-    </ul>
-  </nav>
-
 </div>
