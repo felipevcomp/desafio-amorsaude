@@ -31,16 +31,20 @@ export class LoginComponent implements OnInit {
     }
   }
 
-  onSubmit(): void {
+  onSubmit(f: any): void {
+    if (!f.valid) {
+      // Marca os campos como "tocados" para exibir erros
+      f.form.markAllAsTouched();
+      return;
+    }
+
     const { email, password } = this.form;
 
     this.authService.login(email, password).subscribe({
       next: data => {
         this.storageService.saveUser(data);
-
         this.isLoginFailed = false;
         this.isLoggedIn = true;
-
         this.router.navigate(['/clinic']);
       },
       error: err => {
@@ -52,7 +56,6 @@ export class LoginComponent implements OnInit {
         }
         this.isLoginFailed = true;
       }
-
     });
   }
 }

@@ -1,15 +1,14 @@
 <div class="col-md-12">
   <div class="card card-container">
     <h2>Login</h2>
+
+    <!-- mensagem geral de erro -->
     <div class="text-danger mt-1" *ngIf="(password.errors || email.errors) && f.submitted">
       Dados incorretos. Por favor, revise seus dados e tente novamente.
     </div>
-    <form
-      name="form"
-      (ngSubmit)="f.form.valid && onSubmit()"
-      #f="ngForm"
-      novalidate
-    >
+
+    <form name="form" (ngSubmit)="onSubmit(f)" #f="ngForm" novalidate>
+      <!-- EMAIL -->
       <div class="form-group">
         <label for="email">E-mail</label>
         <input
@@ -19,18 +18,23 @@
           [(ngModel)]="form.email"
           required
           #email="ngModel"
-          [ngClass]="{ 'is-invalid': f.submitted && (email.errors || fieldErrors.email) }"
+          [ngClass]="{ 'is-invalid': f.submitted && (email.invalid || fieldErrors.email) }"
         />
 
         <div class="text-danger mt-1" *ngIf="f.submitted && email.errors?.['required']">
           Por favor, digite seu e-mail.
         </div>
 
-        <div class="text-danger mt-1" *ngIf="fieldErrors.email">
+        <div class="text-danger mt-1" *ngIf="f.submitted && email.errors?.['email']">
+          E-mail inválido.
+        </div>
+
+        <div class="text-danger mt-1" *ngIf="f.submitted && fieldErrors.email">
           {{ fieldErrors.email[0] }}
         </div>
       </div>
 
+      <!-- SENHA -->
       <div class="form-group">
         <label for="password">Senha</label>
         <input
@@ -40,20 +44,20 @@
           [(ngModel)]="form.password"
           required
           #password="ngModel"
-          [ngClass]="{ 'is-invalid': f.submitted && (password.errors || fieldErrors.password) }"
+          [ngClass]="{ 'is-invalid': f.submitted && (password.invalid || fieldErrors.password) }"
         />
 
         <div class="text-danger mt-1" *ngIf="f.submitted && password.errors?.['required']">
           Digite uma senha.
         </div>
 
-        <div class="text-danger mt-1" *ngIf="fieldErrors.password">
+        <div class="text-danger mt-1" *ngIf="f.submitted && fieldErrors.password">
           {{ fieldErrors.password[0] }}
         </div>
       </div>
 
       <div class="form-group mt-3">
-        <button class="btn btn-primary btn-block">Entrar</button>
+        <button class="btn btn-primary btn-block" type="submit">Entrar</button>
       </div>
 
       <div class="text-danger mt-1" *ngIf="isLoginFailed && errorMessage">

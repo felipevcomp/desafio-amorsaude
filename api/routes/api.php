@@ -23,13 +23,13 @@ Route::group(['middleware' => 'auth:api'], function () {
         return $request->user();
     });
 
-    // Rotas de clínicas
-    Route::apiResource('clinic', 'ClinicController');
-
     // Rota de especialidades
     Route::get('clinic/specialties', 'ClinicController@specialties');
     // Rota de regionais
     Route::get('clinic/regionals', 'ClinicController@regionals');
+
+    // Rotas de clínicas
+    Route::apiResource('clinic', 'ClinicController');
 
     // Rota de logout
     Route::post('logout', 'AuthController@logout');

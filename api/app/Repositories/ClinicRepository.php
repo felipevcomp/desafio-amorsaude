@@ -17,7 +17,7 @@ class ClinicRepository implements ClinicRepositoryInterface
 
     public function getAll()
     {
-        return $this->clinic->with(['regional', 'specialties'])->paginate(4);
+        return $this->clinic->with(['regional', 'specialties'])->paginate(10);
     }
 
     public function findById(int $id)
