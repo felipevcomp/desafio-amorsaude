@@ -45,7 +45,7 @@ export class ClinicListComponent implements OnInit {
   ngOnInit() {
     this.loadClinics();
 
-    this.filterSubject.pipe(debounceTime(300)).subscribe((term) => {
+    this.filterSubject.pipe(debounceTime(1000)).subscribe((term) => {
       this.applyFilter(term);
     });
   }
@@ -157,7 +157,8 @@ export class ClinicListComponent implements OnInit {
     }
 
     const lowerTerm = term.toLowerCase();
-    this.filteredClinics = this.clinics.filter(c =>
+
+    const localResults = this.clinics.filter(c =>
       c.company_name.toLowerCase().includes(lowerTerm) ||
       c.cnpj.toLowerCase().includes(lowerTerm) ||
       c.regional?.name.toLowerCase().includes(lowerTerm) ||
@@ -165,8 +166,28 @@ export class ClinicListComponent implements OnInit {
       (c.active ? 'sim' : 'não').includes(lowerTerm)
     );
 
-    if (this.sortColumn) this.sortData(this.sortColumn);
+    if (localResults.length > 0) {
+      this.filteredClinics = localResults;
+      if (this.sortColumn) this.sortData(this.sortColumn);
+      return;
+    }
+
+    this.loading = true;
+
+    this.clinicService.searchClinics(term).subscribe({
+      next: (res: any) => {
+        this.filteredClinics = res.data ?? []; // mantém padrão de paginação
+        this.loading = false;
+
+        if (this.sortColumn) this.sortData(this.sortColumn);
+      },
+      error: () => {
+        this.filteredClinics = [];
+        this.loading = false;
+      }
+    });
   }
+
 
   openSpecialtiesModal(specialties: any[]) {
     const modalRef = this.modalService.open(SpecialtiesModalComponent, {size: 'lg', centered: true });

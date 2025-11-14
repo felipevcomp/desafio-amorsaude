@@ -2,21 +2,22 @@
   <div class="card card-container">
     <h2>Login</h2>
 
-    <!-- mensagem geral de erro -->
-    <div class="text-danger mt-1" *ngIf="(password.errors || email.errors) && f.submitted">
+    <div class="text-danger mt-1" *ngIf="((password.errors || email.errors) && f.submitted) || isLoginFailed">
       Dados incorretos. Por favor, revise seus dados e tente novamente.
     </div>
 
     <form name="form" (ngSubmit)="onSubmit(f)" #f="ngForm" novalidate>
       <!-- EMAIL -->
-      <div class="form-group">
+      <div class="form-group mb-3">
         <label for="email">E-mail</label>
         <input
           type="email"
+          id="email"
           class="form-control"
           name="email"
           [(ngModel)]="form.email"
           required
+          email
           #email="ngModel"
           [ngClass]="{ 'is-invalid': f.submitted && (email.invalid || fieldErrors.email) }"
         />
@@ -24,45 +25,56 @@
         <div class="text-danger mt-1" *ngIf="f.submitted && email.errors?.['required']">
           Por favor, digite seu e-mail.
         </div>
-
         <div class="text-danger mt-1" *ngIf="f.submitted && email.errors?.['email']">
           E-mail inválido.
         </div>
-
         <div class="text-danger mt-1" *ngIf="f.submitted && fieldErrors.email">
           {{ fieldErrors.email[0] }}
         </div>
       </div>
 
-      <!-- SENHA -->
-      <div class="form-group">
+      <div class="form-group mb-3">
         <label for="password">Senha</label>
-        <input
-          type="password"
-          class="form-control"
-          name="password"
-          [(ngModel)]="form.password"
-          required
-          #password="ngModel"
-          [ngClass]="{ 'is-invalid': f.submitted && (password.invalid || fieldErrors.password) }"
-        />
+        <div class="input-group">
+          <input
+            [type]="showPassword ? 'text' : 'password'"
+            id="password"
+            class="form-control"
+            name="password"
+            [(ngModel)]="form.password"
+            required
+            #password="ngModel"
+            [ngClass]="{ 'is-invalid': f.submitted && (password.invalid || fieldErrors.password) }"
+            placeholder="Digite sua senha"
+          />
+
+          <button
+            type="button"
+            class="btn btn-outline-secondary"
+            (click)="togglePasswordVisibility()"
+          >
+            <i class="bi" [ngClass]="showPassword ? 'bi-eye-slash' : 'bi-eye'"></i>
+          </button>
+        </div>
 
         <div class="text-danger mt-1" *ngIf="f.submitted && password.errors?.['required']">
           Digite uma senha.
         </div>
-
         <div class="text-danger mt-1" *ngIf="f.submitted && fieldErrors.password">
           {{ fieldErrors.password[0] }}
         </div>
       </div>
 
+      <!-- BOTÃO -->
       <div class="form-group mt-3">
-        <button class="btn btn-primary btn-block" type="submit">Entrar</button>
+        <button class="btn btn-primary btn-block" type="submit">
+          Entrar
+        </button>
       </div>
 
-      <div class="text-danger mt-1" *ngIf="isLoginFailed && errorMessage">
-        {{ errorMessage }}
-      </div>
+<!--      <div class="text-danger mt-2" *ngIf="isLoginFailed && errorMessage">-->
+<!--        {{ errorMessage }}-->
+<!--      </div>-->
     </form>
   </div>
 </div>

@@ -6,6 +6,8 @@ interface ClinicRepositoryInterface
 {
     public function getAll();
 
+    public function search(string $search);
+
     public function findById(int $id);
 
     public function create(array $data);

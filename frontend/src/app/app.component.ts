@@ -36,6 +36,12 @@ export class AppComponent {
     this.eventBusSub = this.eventBusService.on('logout', () => {
       this.logout();
     });
+
+    this.eventBusService.on('login', () => {
+      this.isLoggedIn = true;
+      const user = this.storageService.getUser();
+      this.username = user?.username;
+    });
   }
 
   logout() {

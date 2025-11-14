@@ -17,12 +17,13 @@ export class LoginComponent implements OnInit {
   isLoginFailed = false;
   errorMessage = '';
   fieldErrors: any = {};
+  showPassword = false;
 
   constructor(
     private authService: AuthService,
     private storageService: StorageService,
     private router: Router
-  ) { }
+  ) {}
 
   ngOnInit(): void {
     if (this.storageService.isLoggedIn()) {
@@ -31,16 +32,19 @@ export class LoginComponent implements OnInit {
     }
   }
 
+  togglePasswordVisibility(): void {
+    this.showPassword = !this.showPassword;
+  }
+
   onSubmit(f: any): void {
     if (!f.valid) {
-      // Marca os campos como "tocados" para exibir erros
       f.form.markAllAsTouched();
       return;
     }
 
     const { email, password } = this.form;
 
-    this.authService.login(email, password).subscribe({
+    this.authService.login({ email, password }).subscribe({
       next: data => {
         this.storageService.saveUser(data);
         this.isLoginFailed = false;
@@ -48,12 +52,22 @@ export class LoginComponent implements OnInit {
         this.router.navigate(['/clinic']);
       },
       error: err => {
+        f.submitted = true;
+        f.form.markAllAsTouched();
+
         if (err.status === 422 && err.error) {
           this.errorMessage = '';
           this.fieldErrors = err.error;
-        } else {
-          this.errorMessage = err.error?.message || 'Erro ao fazer login';
         }
+        else {
+          this.errorMessage = err.error?.message || 'Credenciais inválidas';
+
+          this.fieldErrors = {
+            email: [''],
+            password: ['']
+          };
+        }
+
         this.isLoginFailed = true;
       }
     });

@@ -20,6 +20,18 @@ class ClinicRepository implements ClinicRepositoryInterface
         return $this->clinic->with(['regional', 'specialties'])->paginate(10);
     }
 
+    public function search(string $search)
+    {
+        return $this->clinic
+            ->with(['regional', 'specialties'])
+            ->where(function ($query) use ($search) {
+                $query->where('company_name', 'LIKE', "%{$search}%")
+                    ->orWhere('trade_name', 'LIKE', "%{$search}%")
+                    ->orWhere('cnpj', 'LIKE', "%{$search}%");
+            })
+            ->paginate(10);
+    }
+
     public function findById(int $id)
     {
         return $this->clinic->with(['regional', 'specialties'])->find($id);

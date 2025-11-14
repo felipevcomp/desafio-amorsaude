@@ -44,4 +44,11 @@ export class ClinicService {
   getSpecialties(): Observable<any[]> {
     return this.http.get<any[]>(`${this.apiUrl}/specialties`);
   }
+
+  searchClinics(term: string) {
+    return this.http.get(`${this.apiUrl}/search`, {
+      params: { search: term }
+    });
+  }
+
 }

@@ -74,4 +74,9 @@ class ClinicService
         return Specialty::get();
     }
 
+    public function searchClinics(string $search)
+    {
+        return $this->clinicRepository->search($search);
+    }
+
 }

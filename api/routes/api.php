@@ -28,6 +28,9 @@ Route::group(['middleware' => 'auth:api'], function () {
     // Rota de regionais
     Route::get('clinic/regionals', 'ClinicController@regionals');
 
+    // Rota de filtragem
+    Route::get('clinic/search', 'ClinicController@search');
+
     // Rotas de clínicas
     Route::apiResource('clinic', 'ClinicController');
 

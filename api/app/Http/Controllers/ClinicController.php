@@ -55,4 +55,9 @@ class ClinicController extends Controller
         return $this->clinicService->getClinicSpecialties();
     }
 
+    public function search()
+    {
+        $search = request()->get('search');
+        return $this->clinicService->searchClinics($search);
+    }
 }
