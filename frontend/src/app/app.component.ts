@@ -1,21 +1,32 @@
-import {Component} from '@angular/core';
-import {Subscription} from 'rxjs';
-import {StorageService} from './_services/storage.service';
-import {AuthService} from './_services/auth.service';
-import {EventBusService} from './_shared/event-bus.service';
+import {Component, OnInit} from '@angular/core';
 import {Router} from '@angular/router';
+import {Subscription} from 'rxjs';
 
+import {AuthService} from './_services/auth.service';
+import {StorageService} from './_services/storage.service';
+import {EventBusService} from './_shared/event-bus.service';
+
+/**
+ *
+ */
 @Component({
   selector: 'app-root',
   templateUrl: './app.component.html',
   styleUrls: ['./app.component.css']
 })
-export class AppComponent {
+export class AppComponent implements OnInit {
   isLoggedIn = false;
   username?: string;
 
   eventBusSub?: Subscription;
 
+  /**
+   *
+   * @param storageService
+   * @param authService
+   * @param eventBusService
+   * @param router
+   */
   constructor(
     private storageService: StorageService,
     private authService: AuthService,
@@ -24,6 +35,9 @@ export class AppComponent {
   ) {
   }
 
+  /**
+   *
+   */
   ngOnInit(): void {
     this.isLoggedIn = this.storageService.isLoggedIn();
 
@@ -44,6 +58,9 @@ export class AppComponent {
     });
   }
 
+  /**
+   *
+   */
   logout() {
     this.authService.logout().subscribe({
       next: (res) => {

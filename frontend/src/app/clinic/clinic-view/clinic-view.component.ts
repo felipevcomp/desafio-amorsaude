@@ -1,9 +1,13 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
-import { ClinicService } from '../../_services/clinic.service';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
+
+import { ClinicService } from '../../_services/clinic.service';
 import { SpecialtiesModalComponent } from '../../modals/specialties-modal.component';
 
+/**
+ *
+ */
 @Component({
   selector: 'app-clinic-view',
   templateUrl: './clinic-view.component.html'
@@ -13,6 +17,13 @@ export class ClinicViewComponent implements OnInit {
   loading = false;
   error = '';
 
+  /**
+   *
+   * @param route
+   * @param router
+   * @param clinicService
+   * @param modalService
+   */
   constructor(
     private route: ActivatedRoute,
     private router: Router,
@@ -20,11 +31,18 @@ export class ClinicViewComponent implements OnInit {
     private modalService: NgbModal
   ) {}
 
+  /**
+   *
+   */
   ngOnInit(): void {
     const id = this.route.snapshot.paramMap.get('id');
-    if (id) this.loadClinic(id);
+    if (id) {this.loadClinic(id);}
   }
 
+  /**
+   *
+   * @param id
+   */
   loadClinic(id: string) {
     this.loading = true;
     this.clinicService.getClinic(id).subscribe({
@@ -39,13 +57,20 @@ export class ClinicViewComponent implements OnInit {
     });
   }
 
+  /**
+   *
+   */
   getSpecialtiesPreview(): string {
     const specialties = this.clinic?.specialties || [];
-    if (specialties.length === 0) return 'Nenhuma especialidade';
+    if (specialties.length === 0) {return 'Nenhuma especialidade';}
     const preview = specialties.slice(0, 2).map((s: any) => s.name).join(', ');
     return specialties.length > 2 ? `${preview}` : preview;
   }
 
+  /**
+   *
+   * @param specialties
+   */
   openSpecialtiesModal(specialties: any[]) {
     const modalRef = this.modalService.open(SpecialtiesModalComponent, {
       size: 'lg',
@@ -54,17 +79,28 @@ export class ClinicViewComponent implements OnInit {
     modalRef.componentInstance.specialties = specialties;
   }
 
+  /**
+   *
+   * @param id
+   */
   editClinic(id: number) {
     console.log(id);
     this.router.navigate(['/clinic/edit', id]);
   }
 
+  /**
+   *
+   */
   backToList() {
     this.router.navigate(['/clinic']);
   }
 
+  /**
+   *
+   * @param value
+   */
   formatCnpj(value: string): string {
-    if (!value) return '';
+    if (!value) {return '';}
 
     return value
       .replace(/\D/g, '')

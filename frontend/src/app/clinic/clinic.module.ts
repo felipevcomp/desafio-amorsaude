@@ -1,13 +1,16 @@
-import {NgModule} from '@angular/core';
 import {CommonModule} from '@angular/common';
+import {NgModule} from '@angular/core';
 import {FormsModule, ReactiveFormsModule} from '@angular/forms';
 import {RouterModule, Routes} from '@angular/router';
-
-import {ClinicListComponent} from './clinic-list/clinic-list.component';
-import {ClinicFormComponent} from './clinic-form/clinic-form.component';
-import {ClinicViewComponent} from './clinic-view/clinic-view.component';
-import {authGuard} from '../guards/auth.guard';
 import {NgSelectModule} from "@ng-select/ng-select";
+
+import {authGuard} from '../guards/auth.guard';
+
+import {ClinicFormComponent} from './clinic-form/clinic-form.component';
+import {ClinicListComponent} from './clinic-list/clinic-list.component';
+import {ClinicViewComponent} from './clinic-view/clinic-view.component';
+
+
 
 const routes: Routes = [
   {path: '', component: ClinicListComponent, canActivate: [authGuard]},
@@ -16,6 +19,9 @@ const routes: Routes = [
   {path: 'view/:id', component: ClinicViewComponent, canActivate: [authGuard]},
 ];
 
+/**
+ *
+ */
 @NgModule({
   declarations: [
     ClinicListComponent,

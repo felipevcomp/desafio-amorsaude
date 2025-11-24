@@ -1,6 +1,7 @@
 import {Component, OnInit} from '@angular/core';
 import {FormBuilder, FormGroup, Validators, FormArray} from '@angular/forms';
 import {ActivatedRoute, Router} from '@angular/router';
+
 import {ClinicService} from '../../_services/clinic.service';
 
 interface Specialty {
@@ -13,6 +14,9 @@ interface Regional {
   name: string;
 }
 
+/**
+ *
+ */
 @Component({
   selector: 'app-clinic-form',
   templateUrl: './clinic-form.component.html',
@@ -29,6 +33,13 @@ export class ClinicFormComponent implements OnInit {
   regionals: Regional[] = [];
   specialties: Specialty[] = [];
 
+  /**
+   *
+   * @param fb
+   * @param clinicService
+   * @param route
+   * @param router
+   */
   constructor(
     private fb: FormBuilder,
     private clinicService: ClinicService,
@@ -46,6 +57,9 @@ export class ClinicFormComponent implements OnInit {
     });
   }
 
+  /**
+   *
+   */
   ngOnInit() {
     this.loadRegionals();
     this.loadSpecialties();
@@ -59,6 +73,9 @@ export class ClinicFormComponent implements OnInit {
     });
   }
 
+  /**
+   *
+   */
   loadRegionals() {
     this.clinicService.getRegionals().subscribe({
       next: res => (this.regionals = res),
@@ -66,6 +83,9 @@ export class ClinicFormComponent implements OnInit {
     });
   }
 
+  /**
+   *
+   */
   loadSpecialties() {
     this.clinicService.getSpecialties().subscribe({
       next: res => (this.specialties = res),
@@ -73,6 +93,9 @@ export class ClinicFormComponent implements OnInit {
     });
   }
 
+  /**
+   *
+   */
   loadClinic() {
     this.loading = true;
     this.clinicService.getClinic(this.clinicId!).subscribe({
@@ -97,10 +120,13 @@ export class ClinicFormComponent implements OnInit {
   }
 
 
+  /**
+   *
+   */
   submit() {
     this.submitted = true;
 
-    if (this.form.invalid) return;
+    if (this.form.invalid) {return;}
 
     const specialties = this.form.get('specialties')?.value || [];
     if (specialties.length < 5) {
@@ -135,8 +161,11 @@ export class ClinicFormComponent implements OnInit {
   }
 
 
+  /**
+   *
+   */
   deleteClinic() {
-    if (!this.clinicId) return;
+    if (!this.clinicId) {return;}
 
     if (!confirm('Tem certeza que deseja excluir esta clínica?')) {
       return;

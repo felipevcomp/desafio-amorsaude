@@ -6,6 +6,9 @@ interface Specialty {
   name: string;
 }
 
+/**
+ *
+ */
 @Component({
   selector: 'app-specialties-modal',
   template: `
@@ -23,5 +26,9 @@ interface Specialty {
 export class SpecialtiesModalComponent {
   @Input() specialties: Specialty[] = [];
 
+  /**
+   *
+   * @param activeModal
+   */
   constructor(public activeModal: NgbActiveModal) {}
 }

@@ -1,8 +1,12 @@
 import { Component, OnInit } from '@angular/core';
-import { AuthService } from '../_services/auth.service';
-import { StorageService } from '../_services/storage.service';
 import { Router } from '@angular/router';
 
+import { AuthService } from '../_services/auth.service';
+import { StorageService } from '../_services/storage.service';
+
+/**
+ *
+ */
 @Component({
   selector: 'app-login',
   templateUrl: './login.component.html',
@@ -19,12 +23,21 @@ export class LoginComponent implements OnInit {
   fieldErrors: any = {};
   showPassword = false;
 
+  /**
+   *
+   * @param authService
+   * @param storageService
+   * @param router
+   */
   constructor(
     private authService: AuthService,
     private storageService: StorageService,
     private router: Router
   ) {}
 
+  /**
+   *
+   */
   ngOnInit(): void {
     if (this.storageService.isLoggedIn()) {
       this.isLoggedIn = true;
@@ -32,10 +45,17 @@ export class LoginComponent implements OnInit {
     }
   }
 
+  /**
+   *
+   */
   togglePasswordVisibility(): void {
     this.showPassword = !this.showPassword;
   }
 
+  /**
+   *
+   * @param f
+   */
   onSubmit(f: any): void {
     if (!f.valid) {
       f.form.markAllAsTouched();

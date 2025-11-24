@@ -1,9 +1,11 @@
 import {Component, OnInit} from '@angular/core';
-import {ClinicService} from '../../_services/clinic.service';
-import {debounceTime, Subject} from "rxjs";
-import {NgbModal} from '@ng-bootstrap/ng-bootstrap';
-import {SpecialtiesModalComponent} from '../../modals/specialties-modal.component';
 import {Router} from "@angular/router";
+import {NgbModal} from '@ng-bootstrap/ng-bootstrap';
+import {debounceTime, Subject} from "rxjs";
+
+import {ClinicService} from '../../_services/clinic.service';
+import {SpecialtiesModalComponent} from '../../modals/specialties-modal.component';
+
 
 interface Clinic {
   id: number;
@@ -16,6 +18,9 @@ interface Clinic {
   opening_date: string;
 }
 
+/**
+ *
+ */
 @Component({
   selector: 'app-clinic-list',
   templateUrl: './clinic-list.component.html',
@@ -39,9 +44,18 @@ export class ClinicListComponent implements OnInit {
   filterTerm: string = '';
   private filterSubject: Subject<string> = new Subject();
 
+  /**
+   *
+   * @param clinicService
+   * @param modalService
+   * @param router
+   */
   constructor(private clinicService: ClinicService, private modalService: NgbModal, private router: Router) {
   }
 
+  /**
+   *
+   */
   ngOnInit() {
     this.loadClinics();
 
@@ -50,6 +64,10 @@ export class ClinicListComponent implements OnInit {
     });
   }
 
+  /**
+   *
+   * @param page
+   */
   loadClinics(page: number = 1) {
     this.loading = true;
     this.error = '';
@@ -62,7 +80,7 @@ export class ClinicListComponent implements OnInit {
         this.updateVisiblePages();
         this.loading = false;
 
-        if (this.sortColumn) this.sortData(this.sortColumn);
+        if (this.sortColumn) {this.sortData(this.sortColumn);}
       },
       error: () => {
         this.error = 'Erro ao carregar clínicas';
@@ -71,11 +89,18 @@ export class ClinicListComponent implements OnInit {
     });
   }
 
+  /**
+   *
+   * @param page
+   */
   goToPage(page: number) {
-    if (page < 1 || page > this.lastPage || page === this.currentPage) return;
+    if (page < 1 || page > this.lastPage || page === this.currentPage) {return;}
     this.loadClinics(page);
   }
 
+  /**
+   *
+   */
   updateVisiblePages() {
     const total = this.lastPage;
     const current = this.currentPage;
@@ -94,6 +119,10 @@ export class ClinicListComponent implements OnInit {
     this.visiblePages = Array.from({length: end - start + 1}, (_, i) => start + i);
   }
 
+  /**
+   *
+   * @param column
+   */
   sortBy(column: string) {
     if (this.sortColumn === column) {
       this.sortDirection = this.sortDirection === 'asc' ? 'desc' : 'asc';
@@ -105,6 +134,10 @@ export class ClinicListComponent implements OnInit {
     this.sortData(column);
   }
 
+  /**
+   *
+   * @param column
+   */
   private sortData(column: string) {
     this.filteredClinics.sort((a, b) => {
       let aValue: any;
@@ -139,20 +172,28 @@ export class ClinicListComponent implements OnInit {
       aValue = typeof aValue === 'string' ? aValue.toLowerCase() : aValue;
       bValue = typeof bValue === 'string' ? bValue.toLowerCase() : bValue;
 
-      if (aValue < bValue) return this.sortDirection === 'asc' ? -1 : 1;
-      if (aValue > bValue) return this.sortDirection === 'asc' ? 1 : -1;
+      if (aValue < bValue) {return this.sortDirection === 'asc' ? -1 : 1;}
+      if (aValue > bValue) {return this.sortDirection === 'asc' ? 1 : -1;}
       return 0;
     });
   }
 
+  /**
+   *
+   * @param term
+   */
   onFilterChange(term: string) {
     this.filterSubject.next(term);
   }
 
+  /**
+   *
+   * @param term
+   */
   private applyFilter(term: string) {
     if (!term) {
       this.filteredClinics = [...this.clinics];
-      if (this.sortColumn) this.sortData(this.sortColumn);
+      if (this.sortColumn) {this.sortData(this.sortColumn);}
       return;
     }
 
@@ -168,7 +209,7 @@ export class ClinicListComponent implements OnInit {
 
     if (localResults.length > 0) {
       this.filteredClinics = localResults;
-      if (this.sortColumn) this.sortData(this.sortColumn);
+      if (this.sortColumn) {this.sortData(this.sortColumn);}
       return;
     }
 
@@ -179,7 +220,7 @@ export class ClinicListComponent implements OnInit {
         this.filteredClinics = res.data ?? []; // mantém padrão de paginação
         this.loading = false;
 
-        if (this.sortColumn) this.sortData(this.sortColumn);
+        if (this.sortColumn) {this.sortData(this.sortColumn);}
       },
       error: () => {
         this.filteredClinics = [];
@@ -189,24 +230,43 @@ export class ClinicListComponent implements OnInit {
   }
 
 
+  /**
+   *
+   * @param specialties
+   */
   openSpecialtiesModal(specialties: any[]) {
     const modalRef = this.modalService.open(SpecialtiesModalComponent, {size: 'lg', centered: true });
     modalRef.componentInstance.specialties = specialties;
   }
 
+  /**
+   *
+   * @param cnpj
+   */
   formatCnpj(cnpj: string): string {
-    if (!cnpj) return '';
+    if (!cnpj) {return '';}
     const v = cnpj.replace(/\D/g, '');
     return v.replace(/^(\d{2})(\d{3})(\d{3})(\d{4})(\d{2})$/, '$1.$2.$3/$4-$5');
   }
+  /**
+   *
+   */
   newClinic() {
     this.router.navigate(['/clinic/create']);
   }
 
+  /**
+   *
+   * @param id
+   */
   editClinic(id: number) {
     this.router.navigate(['/clinic/edit', id]);
   }
 
+  /**
+   *
+   * @param id
+   */
   viewClinic(id: number) {
     this.router.navigate(['/clinic/view', id]);
   }
