@@ -10,6 +10,7 @@ services:
       - ./php/php.ini:/usr/local/etc/php/php.ini
     depends_on:
       - db
+      - redis
     command: ["/usr/sbin/apache2ctl", "-D", "FOREGROUND"]
 
   db:
@@ -34,6 +35,12 @@ services:
       - "4200:4200"
     depends_on:
       - app
+
+  redis:
+    image: redis:7.0
+    ports:
+      - "6379:6379"
+    command: [ "redis-server", "--appendonly", "yes" ]
 
 volumes:
   dbdata:
