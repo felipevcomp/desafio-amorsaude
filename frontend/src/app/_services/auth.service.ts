@@ -2,11 +2,11 @@ import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable, tap } from 'rxjs';
 
-import { EventBusService } from '../_shared/event-bus.service';
+import { EventBusService } from '@/app/_shared/event-bus.service';
 import {
   LoginRequest,
   LoginResponse,
-} from '../_shared/models/auth.model';
+} from '@/app/_shared/models/auth.model';
 
 import { StorageService } from './storage.service';
 

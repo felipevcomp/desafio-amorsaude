@@ -2,7 +2,7 @@ import { HttpEvent, HttpInterceptor, HttpHandler, HttpRequest, HTTP_INTERCEPTORS
 import { Injectable } from '@angular/core';
 import { Observable, delay } from 'rxjs';
 
-import { StorageService } from '../_services/storage.service';
+import { StorageService } from '@/app/_services/storage.service';
 
 @Injectable()
 export class HttpRequestInterceptor implements HttpInterceptor {

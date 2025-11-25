@@ -2,7 +2,7 @@ import {Component, OnInit} from '@angular/core';
 import {FormBuilder, FormGroup, Validators, FormArray} from '@angular/forms';
 import {ActivatedRoute, Router} from '@angular/router';
 
-import {ClinicService} from '../../_services/clinic.service';
+import {ClinicService} from '@/app/_services/clinic.service';
 import {cnpjValidator} from "@/app/_validators/cnpj.validator";
 
 interface Specialty {

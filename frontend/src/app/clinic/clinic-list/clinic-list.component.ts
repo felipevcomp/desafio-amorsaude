@@ -3,8 +3,8 @@ import {Router} from "@angular/router";
 import {NgbModal} from '@ng-bootstrap/ng-bootstrap';
 import {debounceTime, Subject} from "rxjs";
 
-import {Clinic} from '../../_shared/models/clinic.model'
-import {ClinicService} from '../../_services/clinic.service';
+import {Clinic} from '@/app/_shared/models/clinic.model'
+import {ClinicService} from '@/app/_services/clinic.service';
 import {SpecialtiesModalComponent} from '@/app/_shared/modals/specialties-modal.component';
 
 /**

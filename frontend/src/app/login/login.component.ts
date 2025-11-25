@@ -2,14 +2,14 @@ import { Component, OnInit } from '@angular/core';
 import { NgForm } from '@angular/forms';
 import { Router } from '@angular/router';
 
-import { AuthService } from '../_services/auth.service';
-import { StorageService } from '../_services/storage.service';
+import { AuthService } from '@/app/_services/auth.service';
+import { StorageService } from '@/app/_services/storage.service';
 import {
   LoginForm,
   LoginRequest,
   LoginResponse,
   ValidationErrors
-} from '../_shared/models/auth.model';
+} from '@/app/_shared/models/auth.model';
 
 /**
  *
