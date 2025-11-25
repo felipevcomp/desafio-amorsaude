@@ -5,7 +5,7 @@ import {debounceTime, Subject} from "rxjs";
 
 import {Clinic} from '../../_shared/models/clinic.model'
 import {ClinicService} from '../../_services/clinic.service';
-import {SpecialtiesModalComponent} from '../../modals/specialties-modal.component';
+import {SpecialtiesModalComponent} from '@/app/_shared/modals/specialties-modal.component';
 
 /**
  *

@@ -4,7 +4,7 @@ import {FormsModule, ReactiveFormsModule} from '@angular/forms';
 import {RouterModule, Routes} from '@angular/router';
 import {NgSelectModule} from "@ng-select/ng-select";
 
-import {authGuard} from '../guards/auth.guard';
+import {authGuard} from '@/app/_guards/auth.guard';
 
 import {ClinicFormComponent} from './clinic-form/clinic-form.component';
 import {ClinicListComponent} from './clinic-list/clinic-list.component';

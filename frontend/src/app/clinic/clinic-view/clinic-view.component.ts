@@ -3,7 +3,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 
 import { ClinicService } from '../../_services/clinic.service';
-import { SpecialtiesModalComponent } from '../../modals/specialties-modal.component';
+import { SpecialtiesModalComponent } from '@/app/_shared/modals/specialties-modal.component';
 
 /**
  *

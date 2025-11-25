@@ -10,7 +10,7 @@ import {httpInterceptorProviders} from './_helpers/http.interceptor';
 import {AppRoutingModule} from './app-routing.module';
 import {AppComponent} from './app.component';
 import {LoginComponent} from './login/login.component';
-import {SpecialtiesModalComponent} from "./modals/specialties-modal.component";
+import {SpecialtiesModalComponent} from "@/app/_shared/modals/specialties-modal.component";
 
 
 
