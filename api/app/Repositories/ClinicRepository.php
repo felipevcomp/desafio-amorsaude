@@ -2,6 +2,7 @@
 
 namespace App\Repositories;
 
+use Illuminate\Support\Facades\Cache;
 
 use App\Models\Clinic;
 use App\Repositories\Interfaces\ClinicRepositoryInterface;
@@ -17,24 +18,18 @@ class ClinicRepository implements ClinicRepositoryInterface
 
     public function getAll()
     {
-        return $this->clinic->with(['regional', 'specialties'])->paginate(10);
-    }
+        $page = request()->get('page', 1);
 
-    public function search(string $search)
-    {
-        return $this->clinic
-            ->with(['regional', 'specialties'])
-            ->where(function ($query) use ($search) {
-                $query->where('company_name', 'LIKE', "%{$search}%")
-                    ->orWhere('trade_name', 'LIKE', "%{$search}%")
-                    ->orWhere('cnpj', 'LIKE', "%{$search}%");
-            })
-            ->paginate(10);
+        return Cache::remember("clinics.all.page.{$page}", 1, function () {
+            return $this->clinic->with(['regional', 'specialties'])->paginate(10);
+        });
     }
 
     public function findById(int $id)
     {
-        return $this->clinic->with(['regional', 'specialties'])->find($id);
+        return Cache::remember("clinic.{$id}", 1, function () use ($id) {
+            return $this->clinic->with(['regional', 'specialties'])->find($id);
+        });
     }
 
     public function create(array $data)
@@ -44,6 +39,8 @@ class ClinicRepository implements ClinicRepositoryInterface
         if (isset($data['specialties']) && is_array($data['specialties'])) {
             $clinic->specialties()->attach($data['specialties']);
         }
+
+        $this->clearAllClinicsCache();
 
         return $clinic->fresh(['regional', 'specialties']);
     }
@@ -62,6 +59,10 @@ class ClinicRepository implements ClinicRepositoryInterface
             $clinic->specialties()->sync($data['specialties']);
         }
 
+        Cache::forget("clinic.{$id}");
+
+        $this->clearAllClinicsCache();
+
         return $clinic->fresh(['regional', 'specialties']);
     }
 
@@ -73,7 +74,32 @@ class ClinicRepository implements ClinicRepositoryInterface
             return false;
         }
 
+        Cache::forget("clinic.{$id}");
+
+        $this->clearAllClinicsCache();
+
         return $clinic->delete();
+    }
+
+    public function search(string $search)
+    {
+        return Cache::remember("clinic.search.{$search}", 1, function () use ($search){
+            return $this->clinic
+                ->with(['regional', 'specialties'])
+                ->where(function ($query) use ($search) {
+                    $query->where('company_name', 'LIKE', "%{$search}%")
+                        ->orWhere('trade_name', 'LIKE', "%{$search}%")
+                        ->orWhere('cnpj', 'LIKE', "%{$search}%");
+                })
+                ->paginate(10);
+        });
+    }
+
+    private function clearAllClinicsCache()
+    {
+        $page = request()->get('page', 1);
+
+        Cache::forget("clinics.all.page.{$page}");
     }
 
 }

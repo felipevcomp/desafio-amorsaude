@@ -2,6 +2,8 @@
 
 namespace App\Repositories;
 
+use Illuminate\Support\Facades\Cache;
+
 use App\Models\User;
 use App\Repositories\Interfaces\UserRepositoryInterface;
 
@@ -16,12 +18,16 @@ class UserRepository implements UserRepositoryInterface
 
     public function findByEmail(string $email)
     {
-        return $this->user->where('email', $email)->first();
+        return Cache::remember("user.email.{$email}", 10, function () use ($email) {
+            return $this->user->where('email', $email)->first();
+        });
     }
 
     public function findById(int $id)
     {
-        return $this->user->find($id);
+        return Cache::remember("user.{$id}", 10, function () use ($id) {
+            return $this->user->find($id);
+        });
     }
 
     public function create(array $data): User
@@ -37,7 +43,7 @@ class UserRepository implements UserRepositoryInterface
     {
         $user = $this->findById($userId);
 
-        if (! $user) {
+        if (!$user) {
             return false;
         }
 
