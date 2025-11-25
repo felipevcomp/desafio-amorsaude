@@ -3,6 +3,7 @@ import {FormBuilder, FormGroup, Validators, FormArray} from '@angular/forms';
 import {ActivatedRoute, Router} from '@angular/router';
 
 import {ClinicService} from '../../_services/clinic.service';
+import {cnpjValidator} from "@/app/_validators/cnpj.validator";
 
 interface Specialty {
   id: number;
@@ -49,7 +50,7 @@ export class ClinicFormComponent implements OnInit {
     this.form = this.fb.group({
       company_name: ['', Validators.required],
       trade_name: ['', Validators.required],
-      cnpj: ['', Validators.required],
+      cnpj: ['', [Validators.required, cnpjValidator]],
       regional_id: ['', Validators.required],
       opening_date: ['', Validators.required],
       active: [true],

@@ -3,20 +3,9 @@ import {Router} from "@angular/router";
 import {NgbModal} from '@ng-bootstrap/ng-bootstrap';
 import {debounceTime, Subject} from "rxjs";
 
+import {Clinic} from '../../_shared/models/clinic.model'
 import {ClinicService} from '../../_services/clinic.service';
 import {SpecialtiesModalComponent} from '../../modals/specialties-modal.component';
-
-
-interface Clinic {
-  id: number;
-  company_name: string;
-  trade_name: string;
-  cnpj: string;
-  regional: { id: number; name: string };
-  specialties: { id: number; name: string }[];
-  active: boolean;
-  opening_date: string;
-}
 
 /**
  *
@@ -27,7 +16,6 @@ interface Clinic {
 })
 export class ClinicListComponent implements OnInit {
   clinics: Clinic[] = [];
-  filteredClinics: Clinic[] = [];
   loading: boolean = false;
   error: string = '';
 
@@ -43,6 +31,7 @@ export class ClinicListComponent implements OnInit {
   // variáveis do filtro
   filterTerm: string = '';
   private filterSubject: Subject<string> = new Subject();
+  filteredClinics: Clinic[] = [];
 
   /**
    *
@@ -192,8 +181,8 @@ export class ClinicListComponent implements OnInit {
    */
   private applyFilter(term: string) {
     if (!term) {
-      this.filteredClinics = [...this.clinics];
-      if (this.sortColumn) {this.sortData(this.sortColumn);}
+      this.filterTerm = '';
+      this.loadClinics(1);
       return;
     }
 
@@ -209,7 +198,12 @@ export class ClinicListComponent implements OnInit {
 
     if (localResults.length > 0) {
       this.filteredClinics = localResults;
-      if (this.sortColumn) {this.sortData(this.sortColumn);}
+
+      this.currentPage = 1;
+      this.lastPage = 1;
+      this.visiblePages = [];
+
+      if (this.sortColumn) { this.sortData(this.sortColumn); }
       return;
     }
 
@@ -217,13 +211,21 @@ export class ClinicListComponent implements OnInit {
 
     this.clinicService.searchClinics(term).subscribe({
       next: (res: any) => {
-        this.filteredClinics = res.data ?? []; // mantém padrão de paginação
+        this.filteredClinics = res.data ?? [];
+
+        this.currentPage = 1;
+        this.lastPage = 1;
+        this.visiblePages = [];
+
         this.loading = false;
 
-        if (this.sortColumn) {this.sortData(this.sortColumn);}
+        if (this.sortColumn) { this.sortData(this.sortColumn); }
       },
       error: () => {
         this.filteredClinics = [];
+        this.currentPage = 1;
+        this.lastPage = 1;
+        this.visiblePages = [];
         this.loading = false;
       }
     });

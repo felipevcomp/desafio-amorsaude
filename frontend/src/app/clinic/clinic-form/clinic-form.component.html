@@ -55,17 +55,31 @@
         <!-- CNPJ -->
         <div class="col-md-6">
           <label class="form-label">CNPJ</label>
+
           <input
             type="text"
             class="form-control"
+            [ngClass]="{
+              'is-invalid': submitted && form.get('cnpj')?.invalid
+            }"
             formControlName="cnpj"
             mask="00.000.000/0000-00"
             required
           />
-          <div class="invalid-feedback">
+
+          <!-- CNPJ obrigatório -->
+          <div class="invalid-feedback"
+               *ngIf="submitted && form.get('cnpj')?.hasError('required')">
             CNPJ é obrigatório.
           </div>
+
+          <!-- CNPJ inválido -->
+          <div class="invalid-feedback"
+               *ngIf="submitted && form.get('cnpj')?.hasError('cnpjInvalid')">
+            CNPJ inválido.
+          </div>
         </div>
+
 
         <!-- Regional -->
         <div class="col-md-6">

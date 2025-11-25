@@ -9,6 +9,7 @@ import {authGuard} from '../guards/auth.guard';
 import {ClinicFormComponent} from './clinic-form/clinic-form.component';
 import {ClinicListComponent} from './clinic-list/clinic-list.component';
 import {ClinicViewComponent} from './clinic-view/clinic-view.component';
+import {NgxMaskDirective} from "ngx-mask";
 
 
 
@@ -33,7 +34,8 @@ const routes: Routes = [
     FormsModule,
     ReactiveFormsModule,
     RouterModule.forChild(routes),
-    NgSelectModule
+    NgSelectModule,
+    NgxMaskDirective
   ]
 })
 export class ClinicModule {
