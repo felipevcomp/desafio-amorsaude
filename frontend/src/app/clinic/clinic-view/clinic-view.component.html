@@ -1,9 +1,10 @@
 <div class="container mt-4">
   <div class="card">
-    <div class="card-body">
+      <div class="card-body" style="min-height: 500px">
       <div class="d-flex justify-content-between align-items-center mb-3">
         <h2>Visualizar Clínica</h2>
-        <button class="btn btn-primary" (click)="editClinic(clinic.id)">
+
+        <button *ngIf="!loading" class="btn btn-primary" (click)="editClinic(clinic?.id)">
           Editar
         </button>
       </div>
@@ -18,7 +19,8 @@
             <input
               type="text"
               readonly
-              class="form-control-plaintext"
+              disabled
+              class="form-control"
               [value]="clinic.company_name"
             />
           </div>
@@ -27,7 +29,8 @@
             <input
               type="text"
               readonly
-              class="form-control-plaintext"
+              disabled
+              class="form-control"
               [value]="clinic.trade_name"
             />
           </div>
@@ -38,9 +41,12 @@
             <label class="form-label">CNPJ</label>
             <input
               type="text"
+              mask="00.000.000/0000-00"
               readonly
-              class="form-control-plaintext"
-              [value]="formatCnpj(clinic.cnpj)"
+              disabled
+              class="form-control"
+              [ngModel]="clinic?.cnpj"
+              [ngModelOptions]="{standalone: true}"
             />
           </div>
           <div class="col-md-6">
@@ -48,7 +54,8 @@
             <input
               type="text"
               readonly
-              class="form-control-plaintext"
+              disabled
+              class="form-control"
               [value]="clinic.regional?.name"
             />
           </div>
@@ -57,21 +64,25 @@
         <div class="row mb-3">
           <div class="col-md-6">
             <label class="form-label">Especialidades</label>
-            <div class="d-flex align-items-center">
-              <span >
-                {{ clinic.specialties[0]?.name }}, {{ clinic.specialties[1]?.name }}
-              </span>
+            <div class="input-group">
+              <input
+                type="text"
+                class="form-control"
+                readonly
+                disabled
+                [value]="getSpecialtiesPreview()"
+              />
               <button
+                class="btn btn-outline-secondary"
                 type="button"
-                class="btn btn-link p-0 ms-1"
                 (click)="openSpecialtiesModal(clinic.specialties)"
                 [disabled]="!clinic.specialties?.length"
                 title="Ver todas"
-                style="line-height: 1;"
               >
-                <i class="bi bi-plus-circle fs-5 align-middle"></i>
+                <i class="bi bi-plus-circle"></i>
               </button>
             </div>
+
           </div>
 
           <div class="col-md-6">
@@ -79,7 +90,8 @@
             <input
               type="text"
               readonly
-              class="form-control-plaintext"
+              disabled
+              class="form-control"
               [value]="clinic.active ? 'Sim' : 'Não'"
             />
           </div>
@@ -91,7 +103,8 @@
             <input
               type="text"
               readonly
-              class="form-control-plaintext"
+              disabled
+              class="form-control"
               [value]="clinic.opening_date | date: 'dd/MM/yyyy'"
             />
           </div>

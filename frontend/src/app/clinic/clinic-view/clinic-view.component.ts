@@ -1,9 +1,10 @@
-import { Component, OnInit } from '@angular/core';
-import { ActivatedRoute, Router } from '@angular/router';
-import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
+import {Component, OnInit} from '@angular/core';
+import {ActivatedRoute, Router} from '@angular/router';
+import {NgbModal} from '@ng-bootstrap/ng-bootstrap';
 
-import { ClinicService } from '../../_services/clinic.service';
-import { SpecialtiesModalComponent } from '@/app/_shared/modals/specialties-modal.component';
+import {Clinic} from "@/app/_shared/models/clinic.model";
+import {ClinicService} from '@/app/_services/clinic.service';
+import {SpecialtiesModalComponent} from '@/app/_shared/modals/specialties-modal.component';
 
 /**
  *
@@ -13,7 +14,7 @@ import { SpecialtiesModalComponent } from '@/app/_shared/modals/specialties-moda
   templateUrl: './clinic-view.component.html'
 })
 export class ClinicViewComponent implements OnInit {
-  clinic: any;
+  clinic: Clinic | null = null;
   loading = false;
   error = '';
 
@@ -29,14 +30,17 @@ export class ClinicViewComponent implements OnInit {
     private router: Router,
     private clinicService: ClinicService,
     private modalService: NgbModal
-  ) {}
+  ) {
+  }
 
   /**
    *
    */
   ngOnInit(): void {
     const id = this.route.snapshot.paramMap.get('id');
-    if (id) {this.loadClinic(id);}
+    if (id) {
+      this.loadClinic(id);
+    }
   }
 
   /**
@@ -46,7 +50,7 @@ export class ClinicViewComponent implements OnInit {
   loadClinic(id: string) {
     this.loading = true;
     this.clinicService.getClinic(id).subscribe({
-      next: (res) => {
+      next: (res: Clinic) => {
         this.clinic = res;
         this.loading = false;
       },
@@ -57,12 +61,15 @@ export class ClinicViewComponent implements OnInit {
     });
   }
 
+
   /**
    *
    */
   getSpecialtiesPreview(): string {
     const specialties = this.clinic?.specialties || [];
-    if (specialties.length === 0) {return 'Nenhuma especialidade';}
+    if (specialties.length === 0) {
+      return 'Nenhuma especialidade';
+    }
     const preview = specialties.slice(0, 2).map((s: any) => s.name).join(', ');
     return specialties.length > 2 ? `${preview}` : preview;
   }
@@ -83,8 +90,8 @@ export class ClinicViewComponent implements OnInit {
    *
    * @param id
    */
-  editClinic(id: number) {
-    console.log(id);
+  editClinic(id?: number) {
+    if (!id) return;
     this.router.navigate(['/clinic/edit', id]);
   }
 
@@ -93,21 +100,5 @@ export class ClinicViewComponent implements OnInit {
    */
   backToList() {
     this.router.navigate(['/clinic']);
-  }
-
-  /**
-   *
-   * @param value
-   */
-  formatCnpj(value: string): string {
-    if (!value) {return '';}
-
-    return value
-      .replace(/\D/g, '')
-      .replace(/(\d{2})(\d)/, '$1.$2')
-      .replace(/(\d{3})(\d)/, '$1.$2')
-      .replace(/(\d{3})(\d)/, '$1/$2')
-      .replace(/(\d{4})(\d)/, '$1-$2')
-      .substring(0, 18);
   }
 }

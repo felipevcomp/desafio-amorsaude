@@ -179,7 +179,7 @@ export class ClinicFormComponent implements OnInit {
 
         setTimeout(() => {
           this.router.navigate(['/clinic']);
-        }, 1500);
+        }, 1000);
 
         this.saving = false;
       },
