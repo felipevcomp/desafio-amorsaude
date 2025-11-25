@@ -3,11 +3,10 @@
     <h2>Login</h2>
 
     <div class="text-danger mt-1" *ngIf="((password.errors || email.errors) && f.submitted) || isLoginFailed">
-      Dados incorretos. Por favor, revise seus dados e tente novamente.
+      {{ errorMessage }}
     </div>
 
     <form name="form" (ngSubmit)="onSubmit(f)" #f="ngForm" novalidate>
-      <!-- EMAIL -->
       <div class="form-group mb-3">
         <label for="email">E-mail</label>
         <input
@@ -23,13 +22,10 @@
         />
 
         <div class="text-danger mt-1" *ngIf="f.submitted && email.errors?.['required']">
-          Por favor, digite seu e-mail.
+          Por favor, digite seu usuário (e-mail de cadastro)!
         </div>
         <div class="text-danger mt-1" *ngIf="f.submitted && email.errors?.['email']">
-          E-mail inválido.
-        </div>
-        <div class="text-danger mt-1" *ngIf="f.submitted && fieldErrors.email">
-          {{ fieldErrors.email[0] }}
+          Digite um e-mail válido
         </div>
       </div>
 
@@ -60,21 +56,13 @@
         <div class="text-danger mt-1" *ngIf="f.submitted && password.errors?.['required']">
           Digite uma senha.
         </div>
-        <div class="text-danger mt-1" *ngIf="f.submitted && fieldErrors.password">
-          {{ fieldErrors.password[0] }}
-        </div>
       </div>
 
-      <!-- BOTÃO -->
       <div class="form-group mt-3">
         <button class="btn btn-primary btn-block" type="submit">
           Entrar
         </button>
       </div>
-
-<!--      <div class="text-danger mt-2" *ngIf="isLoginFailed && errorMessage">-->
-<!--        {{ errorMessage }}-->
-<!--      </div>-->
     </form>
   </div>
 </div>

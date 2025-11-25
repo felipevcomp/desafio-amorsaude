@@ -3,8 +3,13 @@ import { Injectable } from '@angular/core';
 import { Observable, tap } from 'rxjs';
 
 import { EventBusService } from '../_shared/event-bus.service';
+import {
+  LoginRequest,
+  LoginResponse,
+} from '../_shared/models/auth.model';
 
 import { StorageService } from './storage.service';
+
 
 const AUTH_API = 'http://localhost:8080/api/';
 
@@ -33,18 +38,16 @@ export class AuthService {
   ) {}
 
   /**
-   *
+
    * @param credentials
-   * @param credentials.email
-   * @param credentials.password
    */
-  login(credentials: { email: string; password: string }): Observable<any> {
-    return this.http.post(
+  login(credentials: LoginRequest): Observable<LoginResponse> {
+    return this.http.post<LoginResponse>(
       AUTH_API + 'login',
       credentials,
       httpOptions
     ).pipe(
-      tap((user: any) => {
+      tap((user: LoginResponse) => {
         this.storageService.saveUser(user);
         this.eventBusService.emit({ name: 'login', value: null });
       })

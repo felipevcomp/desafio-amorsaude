@@ -1,8 +1,15 @@
 import { Component, OnInit } from '@angular/core';
+import { NgForm } from '@angular/forms';
 import { Router } from '@angular/router';
 
 import { AuthService } from '../_services/auth.service';
 import { StorageService } from '../_services/storage.service';
+import {
+  LoginForm,
+  LoginRequest,
+  LoginResponse,
+  ValidationErrors
+} from '../_shared/models/auth.model';
 
 /**
  *
@@ -13,15 +20,16 @@ import { StorageService } from '../_services/storage.service';
   styleUrls: ['./login.component.css']
 })
 export class LoginComponent implements OnInit {
-  form: any = {
+  form: LoginForm = {
     email: null,
     password: null
   };
+
   isLoggedIn = false;
+  showPassword = false;
   isLoginFailed = false;
   errorMessage = '';
-  fieldErrors: any = {};
-  showPassword = false;
+  fieldErrors: ValidationErrors = {};
 
   /**
    *
@@ -56,36 +64,33 @@ export class LoginComponent implements OnInit {
    *
    * @param f
    */
-  onSubmit(f: any): void {
+  onSubmit(f: NgForm): void {
     if (!f.valid) {
       f.form.markAllAsTouched();
+      this.errorMessage = 'Dados incorretos. Por favor, revise seus dados e tente novamente.';
       return;
     }
 
-    const { email, password } = this.form;
+    const payload: LoginRequest = {
+      email: this.form.email ?? '',
+      password: this.form.password ?? ''
+    };
 
-    this.authService.login({ email, password }).subscribe({
-      next: data => {
+    this.authService.login(payload).subscribe({
+      next: (data: LoginResponse) => {
         this.storageService.saveUser(data);
         this.isLoginFailed = false;
-        this.isLoggedIn = true;
         this.router.navigate(['/clinic']);
       },
       error: err => {
-        f.submitted = true;
         f.form.markAllAsTouched();
 
-        if (err.status === 422 && err.error) {
-          this.errorMessage = '';
-          this.fieldErrors = err.error;
-        }
-        else {
-          this.errorMessage = err.error?.message || 'Credenciais inválidas';
+        this.errorMessage = 'Senha ou usuário incorretos, revise suas credenciais!';
 
-          this.fieldErrors = {
-            email: [''],
-            password: ['']
-          };
+        if (err.status === 422 && err.error) {
+          this.fieldErrors = err.error;
+        } else {
+          this.fieldErrors = { email: [''], password: [''] };
         }
 
         this.isLoginFailed = true;
