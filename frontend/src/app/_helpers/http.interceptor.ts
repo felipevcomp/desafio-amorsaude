@@ -1,26 +1,13 @@
-import {HttpEvent, HttpInterceptor, HttpHandler, HttpRequest, HTTP_INTERCEPTORS,} from '@angular/common/http';
-import {Injectable} from '@angular/core';
-import {Observable} from 'rxjs';
+import { HttpEvent, HttpInterceptor, HttpHandler, HttpRequest, HTTP_INTERCEPTORS } from '@angular/common/http';
+import { Injectable } from '@angular/core';
+import { Observable, delay } from 'rxjs';
 
-import {StorageService} from '../_services/storage.service';
+import { StorageService } from '../_services/storage.service';
 
-/**
- *
- */
 @Injectable()
 export class HttpRequestInterceptor implements HttpInterceptor {
-  /**
-   *
-   * @param storageService
-   */
-  constructor(private storageService: StorageService) {
-  }
+  constructor(private storageService: StorageService) {}
 
-  /**
-   *
-   * @param req
-   * @param next
-   */
   intercept(req: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
     const token = this.storageService.getToken();
 
@@ -32,10 +19,12 @@ export class HttpRequestInterceptor implements HttpInterceptor {
       });
     }
 
-    return next.handle(req);
+    return next.handle(req).pipe(
+      delay(1000)
+    );
   }
 }
 
 export const httpInterceptorProviders = [
-  {provide: HTTP_INTERCEPTORS, useClass: HttpRequestInterceptor, multi: true},
+  { provide: HTTP_INTERCEPTORS, useClass: HttpRequestInterceptor, multi: true },
 ];
