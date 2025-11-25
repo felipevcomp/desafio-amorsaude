@@ -1,9 +1,9 @@
-import { Component, OnInit } from '@angular/core';
-import { NgForm } from '@angular/forms';
-import { Router } from '@angular/router';
+import {Component, OnInit} from '@angular/core';
+import {NgForm} from '@angular/forms';
+import {Router} from '@angular/router';
 
-import { AuthService } from '@/app/_services/auth.service';
-import { StorageService } from '@/app/_services/storage.service';
+import {AuthService} from '@/app/_services/auth.service';
+import {StorageService} from '@/app/_services/storage.service';
 import {
   LoginForm,
   LoginRequest,
@@ -20,16 +20,13 @@ import {
   styleUrls: ['./login.component.css']
 })
 export class LoginComponent implements OnInit {
-  form: LoginForm = {
-    email: null,
-    password: null
-  };
-
+  form: LoginForm = {email: null, password: null};
   isLoggedIn = false;
   showPassword = false;
   isLoginFailed = false;
   errorMessage = '';
   fieldErrors: ValidationErrors = {};
+  loading = false;
 
   /**
    *
@@ -41,7 +38,8 @@ export class LoginComponent implements OnInit {
     private authService: AuthService,
     private storageService: StorageService,
     private router: Router
-  ) {}
+  ) {
+  }
 
   /**
    *
@@ -71,6 +69,8 @@ export class LoginComponent implements OnInit {
       return;
     }
 
+    this.loading = true;
+
     const payload: LoginRequest = {
       email: this.form.email ?? '',
       password: this.form.password ?? ''
@@ -80,21 +80,17 @@ export class LoginComponent implements OnInit {
       next: (data: LoginResponse) => {
         this.storageService.saveUser(data);
         this.isLoginFailed = false;
+        this.loading = false;
         this.router.navigate(['/clinic']);
       },
       error: err => {
         f.form.markAllAsTouched();
-
         this.errorMessage = 'Senha ou usuário incorretos, revise suas credenciais!';
-
-        if (err.status === 422 && err.error) {
-          this.fieldErrors = err.error;
-        } else {
-          this.fieldErrors = { email: [''], password: [''] };
-        }
-
+        this.fieldErrors = err.status === 422 && err.error ? err.error : {email: [''], password: ['']};
         this.isLoginFailed = true;
+        this.loading = false;
       }
     });
   }
 }
+
