@@ -7,20 +7,17 @@ chown -R www-data:www-data /var/www/html/bootstrap/cache
 chmod -R 775 /var/www/html/storage
 chmod -R 775 /var/www/html/bootstrap/cache
 
-# Aguarda o banco subir
-echo "Aguardando MySQL..."
-until php -r "try { new PDO('mysql:host=${DB_HOST};dbname=${DB_DATABASE}', '${DB_USERNAME}', '${DB_PASSWORD}'); } catch (Exception \$e) { exit(1); }"; do
+# Espera o banco ficar disponível
+until php artisan migrate:status > /dev/null 2>&1; do
+  echo "Banco ainda não disponível. Tentando novamente em 3 segundos..."
   sleep 3
 done
 
-# Verifica se já existem usuários
-USER_COUNT=$(php artisan tinker --execute="echo DB::table('users')->count();")
+# Executa migrations e seeders
+php artisan migrate:refresh --seed --force
 
-if [ "$USER_COUNT" -eq "0" ]; then
-    echo "Nenhum dado encontrado. Rodando migrations + seeders..."
-    php artisan migrate:fresh --seed
-else
-    echo "Seeders já rodaram anteriormente. Pulando..."
-fi
+php artisan passport:install
 
+
+# Por fim, executa o comando padrão (por exemplo: apache2-foreground)
 exec "$@"
