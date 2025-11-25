@@ -1,3 +1,4 @@
+
 # Projeto - API Laravel 5.4 + Angular 17 Frontend
 
 Este projeto é composto por:
@@ -5,13 +6,13 @@ Este projeto é composto por:
 - **Backend:** Laravel **5.4** com PHP **7.0**
 - **Autenticação:** Laravel **Passport**
 - **Frontend:** Angular 17
-- **Banco de dados MySQL:** Eloquent + Seeders e Factories para população do banco 
+- **Banco de dados MySQL:** **InnoDB** com Eloquent + Seeders e Factories para população do banco
+- **Cache:** Redis configurado para rotas de clínicas e usuários
 - **Padrões utilizados:** Repository Pattern, Services, Interfaces
-- **Ambiente:** Docker configurado para rodar a API e o banco
-- **Integração:** Token Bearer retornado pelo Passport e enviado
-  automaticamente pelo Angular
+- **Ambiente:** Docker configurado para rodar a API, banco e cache
+- **Integração:** Token Bearer retornado pelo Passport e enviado automaticamente pelo Angular
 
-------------------------------------------------------------------------
+---
 
 ## Estrutura Geral do Projeto
 
@@ -40,7 +41,7 @@ Este projeto é composto por:
     ├── docker-compose.yml
     └── README.md
 
-------------------------------------------------------------------------
+---
 
 # Backend (Laravel 5.4)
 
@@ -49,9 +50,10 @@ Este projeto é composto por:
 - PHP **7.0**
 - Laravel **5.4**
 - Laravel **Passport** (OAuth2 / Bearer Token)
-- MySQL (via Docker)
+- MySQL **InnoDB** (via Docker)
+- Redis (cache)
 
-------------------------------------------------------------------------
+---
 
 # Padrões de Arquitetura
 
@@ -75,13 +77,13 @@ Estrutura típica:
 - Permite trocar Eloquent por outra fonte de dados
 - Maior organização
 
-------------------------------------------------------------------------
+---
 
 ## Interfaces
 
 Cada repositório possui sua **Interface**, garantindo um contrato fixo:
 
-``` php
+```php
 interface ClinicRepositoryInterface {
     public function getAll();
     public function find($id);
@@ -91,10 +93,7 @@ interface ClinicRepositoryInterface {
 }
 ```
 
-Isso permite que os *Services* dependam de contratos, não
-implementações.
-
-------------------------------------------------------------------------
+---
 
 ## Service Layer
 
@@ -104,11 +103,30 @@ As regras de negócio ficam em:
 
 O Controller apenas consome:
 
-``` php
+```php
 $this->clinicService->create($request->all());
 ```
 
-------------------------------------------------------------------------
+---
+
+# Cache (Redis)
+
+O projeto utiliza **Redis** para cache de rotas importantes como:
+
+- `/clinics`
+- `/users`
+
+Exemplo de uso em rota de clínicas:
+
+```php
+$page = request()->get('page', 1);
+
+return Cache::remember('clinics.all.page.' . $page, 60, function () {
+    return $this->clinic->with(['regional', 'specialties'])->paginate(10);
+});
+```
+
+---
 
 # Autenticação (Laravel Passport)
 
@@ -121,20 +139,20 @@ O projeto utiliza **Passport**, permitindo:
 
 Instalação usada:
 
-``` bash
+```bash
 php artisan migrate
 php artisan passport:install
 ```
 
 Exemplo de resposta de login:
 
-``` json
+```json
 {
   "token": "eyJ0eXAiOiJKV..."
 }
 ```
 
-------------------------------------------------------------------------
+---
 
 # Frontend (Angular)
 
@@ -148,31 +166,28 @@ Exemplo de resposta de login:
 - Login com validação e toggle de senha
 - Components reutilizáveis (criar/editar)
 
-------------------------------------------------------------------------
+---
 
 # Rodando o Projeto
 
 ## Backend via Docker
 
+Antes de rodar o Docker Compose, copie o arquivo `.env.example` para `.env` dentro da pasta `api`:
+
+```bash
+cp api/.env.example api/.env
+```
+
 Subir ambiente:
 
-``` bash
+```bash
 docker compose up -d
 ```
 
-Após subir o ambiente os seeders e factories irão popular o banco de dados. Caso os dados não estejam presentes, 
-rode os comandos abaixo.
+Após subir o ambiente, os seeders e factories irão popular o banco de dados. Caso os dados não estejam presentes, rode os comandos abaixo:
 
-Instalar dependências:
-
-``` bash
-docker exec -it laravel-app composer install
-```
-
-Rodar migrations + seeds:
-
-``` bash
-docker exec -it laravel-app php artisan migrate --seed
+```bash
+docker exec -it app php artisan migrate --seed
 ```
 
 Usuário padrão criado pelo seeder:
@@ -180,27 +195,23 @@ Usuário padrão criado pelo seeder:
 - **email:** user@email.com
 - **senha:** password
 
-------------------------------------------------------------------------
+---
 
-# Subindo o ambiente Angular
+## Frontend
 
-``` bash
-cd frontend
-npm install
-ng serve
+O container Node já está configurado para instalar dependências e servir a aplicação. Acesse:
+
+```
+http://localhost:4200
 ```
 
-Frontend acessível em:
-
-    http://localhost:4200
-
-------------------------------------------------------------------------
+---
 
 # Comandos Úteis
 
 ### Laravel
 
-``` bash
+```bash
 php artisan migrate
 php artisan migrate:fresh --seed
 php artisan passport:install
@@ -210,8 +221,7 @@ php artisan make:model -m
 
 ### Angular
 
-``` bash
-ng serve -o
+```bash
 ng generate component pages/clinic-form
 ng generate service services/clinic
 ng generate guard auth
@@ -219,13 +229,13 @@ ng generate guard auth
 
 ### Docker
 
-``` bash
+```bash
 docker compose up -d
 docker compose down
 docker exec -it <container> bash
 ```
 
-------------------------------------------------------------------------
+---
 
 # Observações
 
@@ -233,11 +243,6 @@ docker exec -it <container> bash
 - Login utiliza Passport e responde com *accessToken*.
 - Repository Pattern garante uma arquitetura limpa e testável.
 - Interfaces desacoplam Controllers das implementações.
-
-------------------------------------------------------------------------
-
-# Sobre o Projeto
-
-Este repositório é uma base sólida para aplicações **Laravel 5.4 +
-Angular**, utilizando boas práticas modernas como Layers, Repositories,
-Services, Interfaces e autenticação robusta via Passport.
+- MySQL utiliza **InnoDB** em todas as tabelas.
+- Redis está configurado para cache de rotas importantes.
+- O `.env` deve sempre ser criado antes de subir o Docker.
